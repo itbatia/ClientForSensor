@@ -1,6 +1,6 @@
 # ClientForSensor
 
-**ClientForSensor** - это приложение-клиент, которое написано для тестирования RESTful веб-сервиса **SpringBootRESTSensor**.</br>
+**ClientForSensor** - это приложение-клиент, которое написано для тестирования RESTful веб-сервиса **"SpringBootRESTSensor"**.</br>
 > Ссылка на репозиторий https://github.com/itbatia/SpringBootRESTSensor </br>
 
 ClientForSensor взаимодействует с пользователем через консоль (куда и отдаёт полученные данные) + предоставляет график изменения температур.
