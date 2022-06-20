@@ -7,6 +7,7 @@ import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -19,16 +20,19 @@ public class RequestsToRestApi {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void registerSensor(String sensorName) {
+    public HttpStatus registerSensor(String sensorName) {
 
         final String url = "http://localhost:8080/sensors/registration";
 
         Map<String, Object> jsonData = new HashMap<>();
         jsonData.put("name", sensorName);
 
-        makePostRequestWithJSONData(url, jsonData);
+        HttpStatus statusOfResponse = makePostRequestWithJSONData(url, jsonData);
 
-        System.out.println("Ваш датчик успешно зарегистрирован!\n");
+        if (statusOfResponse != null) {
+            System.out.println("Ваш датчик успешно зарегистрирован!\n");
+        }
+        return statusOfResponse;
     }
 
     public void sendMeasurements(int count, String sensorName) {
@@ -56,7 +60,8 @@ public class RequestsToRestApi {
         return jsonResponse.getMeasurements().stream().map(Measurement::getValue).collect(Collectors.toList());
     }
 
-    private void makePostRequestWithJSONData(String url, Map<String, Object> jsonData) {
+    private HttpStatus makePostRequestWithJSONData(String url, Map<String, Object> jsonData) {
+        HttpStatus statusOfResponse = null;
 
         // Чтобы принимающая сторона знала, что я посылаю JSON:
         HttpHeaders headers = new HttpHeaders();
@@ -66,10 +71,11 @@ public class RequestsToRestApi {
         HttpEntity<Object> request = new HttpEntity<>(jsonData, headers);
 
         try {
-            restTemplate.postForObject(url, request, String.class);
+            statusOfResponse = restTemplate.postForObject(url, request, HttpStatus.class);
         } catch (HttpClientErrorException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
+        return statusOfResponse;
     }
 
     public void drawChart(List<Double> temperatures) {
